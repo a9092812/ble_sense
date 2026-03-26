@@ -1,26 +1,99 @@
 @import "tailwindcss";
 
+@theme {
+  --color-cyber-black: #050505;
+  --color-cyber-gray: #1a1a1a;
+  --color-cyber-blue: #00f2ff;
+  --color-cyber-pink: #ff00ff;
+  --color-cyber-purple: #bc00ff;
+  --color-cyber-neon: #39ff14;
+
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-mono), monospace;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #050505;
+  --foreground: #e0e0e0;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+@utility glass {
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+}
+
+@utility glass-card {
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    border-color: rgba(0, 242, 255, 0.4);
+    box-shadow: 0 0 30px rgba(0, 242, 255, 0.1);
+    transform: translateY(-2px);
+  }
+}
+
+@utility neon-text-blue {
+  color: #00f2ff;
+  filter: drop-shadow(0 0 5px rgba(0, 242, 255, 0.8));
+}
+
+@utility neon-text-pink {
+  color: #ff00ff;
+  filter: drop-shadow(0 0 5px rgba(255, 0, 255, 0.8));
+}
+
+@utility neon-border-blue {
+  border-color: rgba(0, 242, 255, 0.5);
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+}
+
+@utility cyber-grid {
+  background-image: linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+@utility pulsing-glow {
+  animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 5px rgba(0, 242, 255, 0.2), inset 0 0 5px rgba(0, 242, 255, 0.1);
+  }
+  to {
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.4), inset 0 0 10px rgba(0, 242, 255, 0.2);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #222;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00f2ff;
 }

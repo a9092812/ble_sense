@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sense BLE Telemetry Dashboard
+
+A production-grade, high-performance telemetry dashboard built with Next.js 15, TypeScript, and Zustand.
+
+## Features
+
+- **Cyberpunk Noir Aesthetics**: Glassmorphism, neon highlights, and dark mode by default.
+- **Live Mode**: Real-time telemetry streaming via WebSocket.
+- **History Mode**: Query and visualize historical data from TimescaleDB.
+- **Sensor Specialization**: Custom visualizations for 8 sensor types (SHT40, Lux, Accelerometer, Soil, etc.).
+- **High Performance**: Optimized for 1000+ packets/second with buffering and throttling.
+- **Responsive Design**: Works on mobile gateways and desktop terminals.
+
+## Architecture
+
+1. **Dashboard**: Next.js + Tailwind CSS.
+2. **State**: Zustand for real-time packet buffering.
+3. **Backend**: Gin API + WebSocket Broadcast.
+4. **Database**: TimescaleDB for history.
 
 ## Getting Started
 
-First, run the development server:
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+2. Configure environment variables:
+   Create a `.env.local` file:
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:8080
+   NEXT_PUBLIC_WS_URL=ws://localhost:8080/ws
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Supported Sensors
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **SHT40**: Temp/Humidity Monitoring
+- **LuxSensor**: Ambient Light Detection
+- **LIS2DH**: 3-Axis Accelerometer
+- **SoilSensor**: NPK + Moisture + pH + Temp
+- **SpeedDistance**: Kinetic Tracking
+- **AmmoniaSensor**: Gas Concentration
+- **TempLogger**: Environmental Logging
+- **DataLogger**: High-frequency payload logging with loss detection
