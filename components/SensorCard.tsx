@@ -100,7 +100,6 @@ export const SensorCard: React.FC<SensorCardProps> = ({ packets, sensorType, sho
       <LiveChart packets={packets} keys={['temperature', 'humidity']} colors={fields.colors} title="Temp Logger" variant="area" />
     </div>
   );
-
   const renderDataLogger = () => {
     const currentId = v.currentPacketId ?? 0;
     return (
@@ -118,6 +117,38 @@ export const SensorCard: React.FC<SensorCardProps> = ({ packets, sensorType, sho
     );
   };
 
+  const renderSen6x = () => (
+    <div className="space-y-6">
+      {/* 💨 Particulate Matter Group */}
+      <div className="grid grid-cols-4 gap-2">
+        <NutrientBox label="PM1.0" value={`${v.pm1?.toFixed(1) ?? '0'}`} />
+        <NutrientBox label="PM2.5" value={`${v.pm25?.toFixed(1) ?? '0'}`} />
+        <NutrientBox label="PM4.0" value={`${v.pm4?.toFixed(1) ?? '0'}`} />
+        <NutrientBox label="PM10" value={`${v.pm10?.toFixed(1) ?? '0'}`} />
+      </div>
+
+      {/* 🧪 Gas & Environment Group */}
+      <div className="grid grid-cols-3 gap-4">
+        <DataPoint icon={<Database className="text-cyber-neon" />} label="CO2" value={`${v.co2?.toFixed(0) ?? '0'} ppm`} />
+        <DataPoint icon={<Wind className="text-cyber-blue" />} label="VOC" value={`${v.voc?.toFixed(0) ?? '0'}`} />
+        <DataPoint icon={<AlertTriangle className="text-cyber-pink" />} label="NOx" value={`${v.nox?.toFixed(0) ?? '0'}`} />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <DataPoint icon={<Thermometer className="text-cyber-blue" />} label="TEMP" value={`${v.temperature?.toFixed(2)}°C`} />
+        <DataPoint icon={<Droplets className="text-cyber-pink" />} label="HUMIDITY" value={`${v.humidity?.toFixed(2)}%`} />
+      </div>
+
+      <LiveChart 
+        packets={packets} 
+        keys={['pm25', 'co2', 'temperature']} 
+        colors={['#ff00ff', '#39ff14', '#00f2ff']} 
+        title="Air Quality & Environment" 
+        variant="area" 
+      />
+    </div>
+  );
+
   const renderContent = () => {
     switch (sensorType) {
       case 'SHT40': return renderSHT40();
@@ -128,6 +159,7 @@ export const SensorCard: React.FC<SensorCardProps> = ({ packets, sensorType, sho
       case 'AmmoniaSensor': return renderAmmonia();
       case 'TempLogger': return renderTempLogger();
       case 'DataLogger': return renderDataLogger();
+      case 'SEN6x': return renderSen6x();
       default: return (
         <div className="p-10 text-center border border-dashed border-white/10 opacity-30 italic">
           UNSUPPORTED_TYPE: {sensorType}

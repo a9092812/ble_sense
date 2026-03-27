@@ -45,7 +45,8 @@ export type SensorType =
   | "SpeedDistance"
   | "AmmoniaSensor"
   | "TempLogger"
-  | "DataLogger";
+  | "DataLogger"
+  | "SEN6x";
 
 // ─── History Data Shapes (from GET /api/devices/{id}/history) ─────────────────
 
@@ -113,6 +114,20 @@ export interface DataLoggerData {
   currentPacketId: number;
   lastPacketId: number;
   payloadAccel?: Array<[number, number, number]>;
+}
+
+export interface Sen6xHistoryData {
+  timestamp: string;
+  deviceId: string;
+  pm1: number;
+  pm25: number;
+  pm4: number;
+  pm10: number;
+  temperature: number;
+  humidity: number;
+  co2: number;
+  voc: number;
+  nox: number;
 }
 
 // ─── WebSocket Live Packet (from ws://backend/ws) ────────────────────────────

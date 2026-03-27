@@ -28,6 +28,7 @@ export const SENSOR_FIELDS: Record<SensorType, { keys: string[]; unit: string; c
   AmmoniaSensor:  { keys: ['ammonia'],                                                            unit: ' ppm', colors: ['#39ff14'] },
   TempLogger:     { keys: ['temperature', 'humidity'],                                            unit: '',     colors: ['#00f2ff', '#ff00ff'] },
   DataLogger:     { keys: ['currentPacketId'],                                                    unit: '',     colors: ['#bc00ff'] },
+  SEN6x:          { keys: ['pm1', 'pm25', 'pm4', 'pm10', 'temperature', 'humidity', 'co2', 'voc', 'nox'], unit: '', colors: ['#00f2ff', '#ff00ff', '#39ff14', '#ffae00', '#bc00ff', '#ff6b6b', '#4ecdc4', '#ffe66d', '#bc00ff'] },
 };
 
 // ─── Numeric Extraction ──────────────────────────────────────────────────────
