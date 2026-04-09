@@ -1,5 +1,18 @@
-export const getWebSocketUrl = () => {
-  return process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8080/ws';
+import { auth } from '@/lib/firebase';
+
+export const getWebSocketUrl = async () => {
+  const baseUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8080/ws';
+  const user = auth.currentUser;
+  
+  if (user) {
+    try {
+      const token = await user.getIdToken();
+      return `${baseUrl}?token=${token}`;
+    } catch (e) {
+      console.error("Error getting token for WS", e);
+    }
+  }
+  return baseUrl;
 };
 
 export class TelemetryWebSocket {

@@ -20,19 +20,21 @@ export const useWebSocket = () => {
 
     if (wsRef.current) return;
 
-    const url = getWebSocketUrl();
-    wsRef.current = new TelemetryWebSocket(url, (raw: any) => {
-      // Handle both single objects and arrays
-      const items = Array.isArray(raw) ? raw : [raw];
-      items.forEach(item => {
-        const packet = normalizeLivePacket(item);
-        if (packet && packet.deviceId) {
-          bufferRef.current.push(packet);
-        }
+    const connectWs = async () => {
+      const url = await getWebSocketUrl();
+      wsRef.current = new TelemetryWebSocket(url, (raw: any) => {
+        const items = Array.isArray(raw) ? raw : [raw];
+        items.forEach(item => {
+          const packet = normalizeLivePacket(item);
+          if (packet && packet.deviceId) {
+            bufferRef.current.push(packet);
+          }
+        });
       });
-    });
+      wsRef.current.connect();
+    };
 
-    wsRef.current.connect();
+    connectWs();
 
     return () => {
       clearInterval(flushInterval);

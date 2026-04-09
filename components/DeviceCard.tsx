@@ -4,65 +4,71 @@ import React from 'react';
 import Link from 'next/link';
 import { MobileGateway } from '@/types/telemetry';
 import { formatDate, formatRelativeTime } from '@/lib/utils';
-import { Cpu, Activity, Clock, ChevronRight, Layers } from 'lucide-react';
+import { useAuth } from '@/components/AuthProvider';
+import { Cpu, Activity, Clock, ChevronRight, User } from 'lucide-react';
 
 interface GatewayCardProps {
   gateway: MobileGateway;
 }
 
 export const DeviceCard: React.FC<GatewayCardProps> = ({ gateway }) => {
+  const { isAnonymous } = useAuth();
   const isOnline = gateway.status === 'ONLINE' || gateway.status === 'STREAMING';
   const isStreaming = gateway.status === 'STREAMING';
 
   return (
-    <div className="glass-card p-6 flex flex-col h-full group relative overflow-hidden">
-      {/* Visual background flair */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-cyber-blue/5 blur-3xl -mr-16 -mt-16 group-hover:bg-cyber-blue/10 transition-all duration-500" />
+    <div className={`glass-card p-6 flex flex-col h-full group transition-all duration-500 hover:scale-[1.02] border border-white/5 ${isAnonymous ? 'hover:border-amber-500/20' : 'hover:border-mint-accent/20'}`}>
+      {/* Subtle Glow on Hover */}
+      <div className={`absolute -top-24 -right-24 w-48 h-48 blur-3xl rounded-full transition-all duration-700 opacity-0 group-hover:opacity-10 ${isAnonymous ? 'bg-amber-500' : 'bg-mint-accent'}`} />
 
-      <div className="flex justify-between items-start mb-6">
-        <div className="p-3 bg-white/5 rounded-xl border border-white/10 group-hover:neon-border-blue transition-all">
-          <Cpu className={`w-6 h-6 ${isOnline ? 'neon-text-blue pulsing-glow' : 'text-gray-600'}`} />
+      <div className="flex justify-between items-start mb-6 relative z-10">
+        <div className={`p-3 glass-inset bg-white/5 border border-white/5 transition-all duration-500 ${isAnonymous ? 'group-hover:border-amber-500/20' : 'group-hover:border-mint-accent/20'}`}>
+          {isAnonymous ? (
+            <User className={`w-6 h-6 ${isOnline ? 'text-amber-500 neon-text-amber' : 'text-text-disabled'}`} />
+          ) : (
+            <Cpu className={`w-6 h-6 ${isOnline ? 'text-mint-accent neon-text-mint' : 'text-text-disabled'}`} />
+          )}
         </div>
-        <div className={`px-2.5 py-1 rounded text-[10px] font-black tracking-[0.2em] uppercase ${
-          isStreaming ? 'bg-cyber-neon/20 text-cyber-neon border border-cyber-neon/50 pulsing-glow' :
-          isOnline ? 'bg-cyber-blue/20 text-cyber-blue border border-cyber-blue/50' :
-          'bg-gray-800 text-gray-500 border border-gray-700'
+        <div className={`px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase border transition-all duration-300 ${
+          isStreaming ? (isAnonymous ? 'bg-amber-500/20 text-amber-500 border-amber-500/30 neon-glow-amber' : 'bg-mint-accent/20 text-mint-accent border-mint-accent/30 neon-glow-mint') :
+          isOnline ? (isAnonymous ? 'bg-amber-500/10 text-amber-500 border-amber-500/20' : 'bg-mint-accent/10 text-mint-accent border-mint-accent/20') :
+          'bg-white/5 text-text-disabled border-white/10'
         }`}>
           {gateway.status}
         </div>
       </div>
 
-      <div className="mb-6">
-        <h3 className="text-xl font-black italic tracking-tighter mb-1 truncate group-hover:text-cyber-blue transition-colors">
-          {gateway.name || 'GATEWAY NODE'}
+      <div className="mb-6 relative z-10">
+        <h3 className={`text-xl font-bold tracking-tight mb-1 truncate text-white transition-colors duration-300 ${isAnonymous ? 'group-hover:text-amber-500' : 'group-hover:text-mint-accent'}`}>
+          {gateway.name || (isAnonymous ? 'ANONYMOUS NODE' : 'SECURE GATEWAY')}
         </h3>
-        <code className="text-[10px] text-gray-500 font-mono tracking-tight">
-          ID: {gateway.mobileId}
+        <code className="text-[10px] text-text-secondary font-mono tracking-tight opacity-70">
+          {isAnonymous ? `ID:${gateway.mobileId.slice(-8)}` : gateway.mobileId}
         </code>
       </div>
 
-      <div className="space-y-3 flex-grow">
-        <div className="flex items-center text-xs text-gray-400 font-mono">
-          <Activity className="w-4 h-4 mr-3 text-cyber-blue/60 shrink-0" />
-          <span className="opacity-70">MOBILE:</span>
-          <span className="ml-2 text-gray-200">{gateway.mobileId}</span>
+      <div className="space-y-3 flex-grow relative z-10">
+        <div className="flex items-center text-xs text-text-secondary font-medium">
+          <Activity className="w-4 h-4 mr-3 text-mint-accent/60 shrink-0" />
+          <span className="opacity-50 uppercase tracking-tighter">Mobile ID</span>
+          <span className="ml-auto text-white/90 font-mono text-[10px]">{gateway.mobileId}</span>
         </div>
-        <div className="flex items-center text-xs text-gray-400 font-mono">
-          <Clock className="w-4 h-4 mr-3 text-cyber-pink/60 shrink-0" />
-          <span className="opacity-70">REG:</span>
-          <span className="ml-2 text-gray-200">
+        <div className="flex items-center text-xs text-text-secondary font-medium">
+          <Clock className="w-4 h-4 mr-3 text-mint-accent/60 shrink-0" />
+          <span className="opacity-50 uppercase tracking-tighter">Registered</span>
+          <span className="ml-auto text-white/90 font-mono text-[10px]">
             {gateway.createdAt ? formatDate(gateway.createdAt) : formatRelativeTime(gateway.lastSeen)}
           </span>
         </div>
       </div>
 
-      <div className="mt-6">
+      <div className="mt-8 relative z-10">
         <Link
           href={`/device/${gateway.mobileId}`}
-          className="w-full py-3 px-4 glass bg-white/5 flex items-center justify-center space-x-2 text-[11px] font-black tracking-[0.3em] hover:bg-white/10 hover:neon-border-blue transition-all"
+          className="w-full py-3 px-4 glass-inset bg-white/5 flex items-center justify-center space-x-2 text-[11px] font-bold tracking-[0.2em] uppercase text-text-secondary hover:text-white hover:bg-white/10 hover:border-mint-accent/30 transition-all duration-300"
         >
-          <span>VIEW SENSORS</span>
-          <ChevronRight className="w-4 h-4" />
+          <span>OPEN DASHBOARD</span>
+          <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </Link>
       </div>
     </div>

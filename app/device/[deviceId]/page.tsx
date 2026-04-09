@@ -21,6 +21,8 @@ import {
   Cpu,
   RefreshCw,
   Calendar,
+  Clock,
+  CheckCircle2,
   Layers,
   Activity,
   Download,
@@ -195,69 +197,69 @@ const handleFetchHistory = () => {
     if (history.length > 0) setMode('HISTORY');
   }, [history]);
 
-  if (loading && !gateway) {
-    return (
-      <div className="min-h-screen bg-cyber-black flex items-center justify-center font-mono">
-        <RefreshCw className="w-8 h-8 text-cyber-blue animate-spin" />
-        <span className="ml-4 tracking-[0.5em] text-xs">LOADING_GATEWAY...</span>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-cyber-black text-white p-4 md:p-8 cyber-grid">
-      <div className="max-w-[1600px] mx-auto">
+    <div className="min-h-screen p-4 md:p-8 relative overflow-hidden">
+      {/* Background Decorative Element */}
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-mint-accent/5 blur-[150px] rounded-full -mr-80 -mt-80 pointer-events-none" />
+      
+      {loading && !gateway ? (
+        <div className="min-h-screen flex items-center justify-center font-bold">
+          <RefreshCw className="w-8 h-8 text-mint-accent animate-spin" />
+          <span className="ml-4 tracking-[0.3em] text-xs uppercase text-text-secondary">SYSTEM_BOOT...</span>
+        </div>
+      ) : (
+        <div className="max-w-[1600px] mx-auto relative z-10">
 
-        {/* ─── Navigation & Device Header ──────────────────────────── */}
-        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 mb-10">
-          <div className="flex items-center space-x-5">
+        {/* Navigation & Device Header */}
+        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 mb-12">
+          <div className="flex items-center space-x-6">
             <button
               onClick={() => router.push('/devices')}
-              className="p-3 glass bg-white/5 hover:bg-white/10 border-white/10 group transition-all rounded-xl"
+              className="p-3 glass-card bg-white/5 hover:bg-white/10 group transition-all rounded-2xl"
             >
-              <ArrowLeft className="w-5 h-5 text-gray-500 group-hover:text-cyber-blue" />
+              <ArrowLeft className="w-5 h-5 text-mint-accent group-hover:scale-110 transition-transform" />
             </button>
             <div>
-              <div className="flex items-center space-x-3 mb-1">
-                <CircuitBoard className="w-4 h-4 text-cyber-blue" />
-                <span className="text-[10px] font-black tracking-[0.4em] text-gray-500 uppercase">
-                  Gateway Console
+              <div className="flex items-center space-x-3 mb-2">
+                <CircuitBoard className="w-4 h-4 text-mint-accent/70" />
+                <span className="text-[10px] font-bold tracking-[0.4em] text-text-secondary uppercase opacity-70">
+                  NODE CONSOLE
                 </span>
               </div>
-              <h1 className="text-3xl md:text-4xl font-black italic tracking-tighter uppercase truncate max-w-xl">
+              <h1 className="text-3xl md:text-4xl font-bold tracking-tight uppercase truncate max-w-xl text-white">
                 {gateway?.name || 'GATEWAY'}{' '}
-                <span className="neon-text-blue font-mono text-xl not-italic">
-                  #{mobileId}
+                <span className="text-mint-accent font-mono text-xl ml-2">
+                  #{mobileId.slice(-6)}
                 </span>
               </h1>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-4">
             {/* Status badges */}
-            <div className="glass px-5 py-3 flex items-center space-x-5 border-white/5 bg-black/40 rounded-xl">
-              <div className="flex items-center space-x-2">
+            <div className="glass-card px-6 py-4 flex items-center space-x-6 bg-white/5 rounded-2xl">
+              <div className="flex items-center space-x-3">
                 {isStreaming ? (
-                  <Wifi className="w-4 h-4 text-cyber-neon animate-pulse" />
+                  <Wifi className="w-5 h-5 text-mint-accent neon-text-mint animate-pulse" />
                 ) : (
-                  <WifiOff className="w-4 h-4 text-gray-600" />
+                  <WifiOff className="w-5 h-5 text-text-disabled" />
                 )}
-                <span className={`text-xs font-black italic ${isStreaming ? 'text-cyber-neon' : 'text-gray-500'}`}>
-                  {isStreaming ? 'LIVE' : 'IDLE'}
+                <span className={`text-xs font-bold tracking-widest ${isStreaming ? 'text-mint-accent' : 'text-text-disabled'}`}>
+                  {isStreaming ? 'STREAMING' : 'READY'}
                 </span>
               </div>
               <div className="w-px h-8 bg-white/10" />
               <div className="flex flex-col">
-                <span className="text-[9px] text-gray-500 font-bold tracking-widest uppercase">PACKETS</span>
-                <span className="text-xs font-mono text-gray-300">{livePackets.length}</span>
+                <span className="text-[9px] text-text-secondary font-bold tracking-widest uppercase mb-1">BUFFER</span>
+                <span className="text-xs font-mono text-white">{livePackets.length} <span className="opacity-40">PKTS</span></span>
               </div>
               {sensors.length > 0 && (
                 <>
                   <div className="w-px h-8 bg-white/10" />
                   <div className="flex flex-col">
-                    <span className="text-[9px] text-gray-500 font-bold tracking-widest uppercase">SENSORS</span>
-                    <span className="text-xs font-mono text-cyber-blue uppercase">
-                      {mode === 'LIVE' ? sensors.filter(s => s.status === 'STREAMING').length : sensors.length} active
+                    <span className="text-[9px] text-text-secondary font-bold tracking-widest uppercase mb-1">NODES</span>
+                    <span className="text-xs font-mono text-mint-accent">
+                      {mode === 'LIVE' ? sensors.filter(s => s.status === 'STREAMING').length : sensors.length} ON BUS
                     </span>
                   </div>
                 </>
@@ -275,36 +277,36 @@ const handleFetchHistory = () => {
                     setSelectedSensor(s.sensorType as SensorType);
                   }
                 }}
-                className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs font-mono text-white focus:outline-none focus:neon-border-blue transition-all min-w-[160px] appearance-none cursor-pointer"
+                className="glass-inset bg-white/5 rounded-xl px-4 py-3 text-xs font-bold text-white focus:outline-none transition-all min-w-[200px] appearance-none cursor-pointer border-none"
               >
                 {filteredSensors.map(s => (
-                  <option key={s.deviceId} value={s.deviceId} className="bg-cyber-black text-white">
-                    {s.sensorType} ({s.deviceId}) {mode === 'LIVE' ? '· LIVE' : (s.status === 'STREAMING' ? '· LIVE' : '· OFFLINE')}
+                  <option key={s.deviceId} value={s.deviceId} className="bg-charcoal-dark text-white">
+                    {s.sensorType} · {s.deviceId.slice(-6)}
                   </option>
                 ))}
               </select>
             ) : (
-                <div className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-[10px] font-mono text-gray-500 uppercase tracking-widest">
-                    No {mode === 'LIVE' ? 'live' : ''} sensors
+                <div className="glass-inset bg-white/5 rounded-xl px-4 py-3 text-[10px] font-bold text-text-disabled uppercase tracking-widest">
+                    Bus Scan in progress...
                 </div>
             )}
 
             {/* Command buttons */}
-            <div className="flex space-x-2">
+            <div className="flex space-x-3">
               <button
                 onClick={() => handleCommand('START_LIVE')}
                 disabled={isSending}
-                className="flex items-center space-x-2 px-5 py-3 bg-cyber-blue text-black font-black italic text-xs tracking-widest hover:brightness-110 active:scale-95 transition-all rounded-xl disabled:opacity-30"
+                className="flex items-center space-x-3 px-6 py-3 bg-mint-accent text-charcoal-dark font-bold text-xs tracking-widest uppercase hover:brightness-110 active:scale-95 transition-all rounded-xl disabled:opacity-30 shadow-lg shadow-mint-accent/20"
               >
-                <Play className="w-4 h-4 fill-black" />
+                <Play className="w-4 h-4 fill-charcoal-dark" />
                 <span>START</span>
               </button>
               <button
                 onClick={() => handleCommand('STOP_LIVE')}
                 disabled={isSending}
-                className="flex items-center space-x-2 px-5 py-3 bg-cyber-black border-2 border-cyber-pink/50 text-cyber-pink font-black italic text-xs tracking-widest hover:bg-cyber-pink/10 transition-all rounded-xl disabled:opacity-30"
+                className="flex items-center space-x-3 px-6 py-3 glass-card bg-white/5 text-white/70 font-bold text-xs tracking-widest uppercase hover:bg-red-500/10 hover:text-red-500 transition-all rounded-xl disabled:opacity-30"
               >
-                <Square className="w-4 h-4 fill-cyber-pink" />
+                <Square className="w-4 h-4" />
                 <span>STOP</span>
               </button>
             </div>
@@ -318,30 +320,30 @@ const handleFetchHistory = () => {
           <div className="lg:col-span-3 space-y-6">
 
             {/* Mode Tabs */}
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-4">
               <button
                 onClick={() => { setMode('LIVE'); clearHistory(); }}
-                className={`flex items-center space-x-3 px-5 py-3 rounded-xl transition-all font-black text-xs tracking-[0.2em] relative overflow-hidden ${
+                className={`flex items-center space-x-3 px-6 py-4 rounded-2xl transition-all font-bold text-xs tracking-[0.2em] relative overflow-hidden ${
                   mode === 'LIVE'
-                    ? 'glass bg-cyber-blue/20 text-cyber-blue border border-cyber-blue/50'
-                    : 'text-gray-500 hover:text-white'
+                    ? 'glass-card bg-mint-accent/10 text-mint-accent shadow-lg shadow-mint-accent/5'
+                    : 'text-text-disabled hover:text-white'
                 }`}
               >
                 <Activity className="w-4 h-4" />
-                <span>LIVE</span>
-                {mode === 'LIVE' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-cyber-blue" />}
+                <span>REALTIME TELEMETRY</span>
+                {mode === 'LIVE' && <div className="absolute bottom-0 left-0 w-full h-[3px] bg-mint-accent" />}
               </button>
               <button
                 onClick={() => setMode('HISTORY')}
-                className={`flex items-center space-x-3 px-5 py-3 rounded-xl transition-all font-black text-xs tracking-[0.2em] relative overflow-hidden ${
+                className={`flex items-center space-x-3 px-6 py-4 rounded-2xl transition-all font-bold text-xs tracking-[0.2em] relative overflow-hidden ${
                   mode === 'HISTORY'
-                    ? 'glass bg-cyber-pink/20 text-cyber-pink border border-cyber-pink/50'
-                    : 'text-gray-500 hover:text-white'
+                    ? 'glass-card bg-white/10 text-white shadow-lg'
+                    : 'text-text-disabled hover:text-white'
                 }`}
               >
                 <History className="w-4 h-4" />
-                <span>HISTORY</span>
-                {mode === 'HISTORY' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-cyber-pink" />}
+                <span>HISTORICAL ANALYSIS</span>
+                {mode === 'HISTORY' && <div className="absolute bottom-0 left-0 w-full h-[3px] bg-white" />}
               </button>
             </div>
 
@@ -375,41 +377,41 @@ const handleFetchHistory = () => {
             {mode === 'HISTORY' && (
               <div className="space-y-6">
                 {/* Filters bar */}
-                <div className="glass p-5 rounded-2xl border-white/5 bg-black/30">
-                  <div className="flex items-center space-x-3 mb-4">
-                    <Filter className="w-4 h-4 text-cyber-pink" />
-                    <span className="text-[10px] font-black tracking-[0.4em] text-gray-400 uppercase">
-                      Query Parameters
+                <div className="glass-card p-6 rounded-2xl bg-white/5 shadow-inner">
+                  <div className="flex items-center space-x-3 mb-6">
+                    <Filter className="w-4 h-4 text-white" />
+                    <span className="text-[10px] font-bold tracking-[0.4em] text-text-secondary uppercase opacity-70">
+                      QUERY PARAMETERS
                     </span>
                   </div>
 
-                  <div className="flex flex-wrap gap-4 items-end">
+                  <div className="flex flex-wrap gap-5 items-end">
                     {/* Sensor selector */}
                     <div className="flex flex-col">
-                      <label className="text-[9px] font-black tracking-widest text-gray-500 uppercase mb-2">Sensor Type</label>
+                      <label className="text-[9px] font-bold tracking-widest text-text-secondary uppercase mb-2 opacity-50">Sensor Type</label>
                       <select
                         value={selectedSensor}
                         onChange={(e) => setSelectedSensor(e.target.value as SensorType)}
-                        className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs font-mono text-white focus:outline-none focus:neon-border-blue transition-all min-w-[160px] appearance-none cursor-pointer"
+                        className="glass-inset bg-white/5 rounded-xl px-4 py-2.5 text-xs font-bold text-white focus:outline-none transition-all min-w-[180px] appearance-none cursor-pointer border-none"
                       >
                         {ALL_SENSORS.map(s => (
-                          <option key={s} value={s} className="bg-cyber-black text-white">{s}</option>
+                          <option key={s} value={s} className="bg-charcoal-dark text-white">{s}</option>
                         ))}
                       </select>
                     </div>
 
                     {/* Time range pills */}
                     <div className="flex flex-col">
-                      <label className="text-[9px] font-black tracking-widest text-gray-500 uppercase mb-2">Time Range</label>
+                      <label className="text-[9px] font-bold tracking-widest text-text-secondary uppercase mb-2 opacity-50">Time Range</label>
                       <div className="flex space-x-1">
                         {TIME_RANGES.map(tr => (
                           <button
                             key={tr.value}
                             onClick={() => setSelectedTimeRange(tr.value)}
-                            className={`px-3 py-2 rounded-lg text-[10px] font-black tracking-wider transition-all ${
+                            className={`px-3 py-2 rounded-lg text-[10px] font-bold tracking-wider transition-all ${
                               selectedTimeRange === tr.value
-                                ? 'bg-cyber-pink/20 text-cyber-pink border border-cyber-pink/50'
-                                : 'bg-white/5 text-gray-500 border border-white/10 hover:text-white'
+                                ? 'glass-card bg-mint-accent/20 text-mint-accent border-mint-accent/20'
+                                : 'bg-white/5 text-text-disabled hover:text-white'
                             }`}
                           >
                             {tr.label}
@@ -417,33 +419,47 @@ const handleFetchHistory = () => {
                         ))}
                       </div>
                     </div>
-<div className="flex flex-col">
-  <label className="text-[9px] font-black tracking-widest text-gray-500 uppercase mb-2">
-    Custom Range
-  </label>
-  <div className="flex space-x-2">
-    <input
-      type="datetime-local"
-      value={customStart}
-      onChange={(e) => setCustomStart(e.target.value)}
-      className="bg-white/5 border border-white/10 rounded-xl px-2 py-2 text-xs"
-    />
-    <input
-      type="datetime-local"
-      value={customEnd}
-      onChange={(e) => setCustomEnd(e.target.value)}
-      className="bg-white/5 border border-white/10 rounded-xl px-2 py-2 text-xs"
-    />
-  </div>
-</div>
+                    <div className="flex flex-col">
+                      <label className="text-[9px] font-bold tracking-widest text-text-secondary uppercase mb-2 flex items-center opacity-50">
+                        <Calendar className="w-3 h-3 mr-2" /> Custom Range
+                      </label>
+                      <div className="flex items-center space-x-2 glass-inset bg-white/5 rounded-xl p-1.5 transition-all">
+                        <div className="relative flex items-center group">
+                          <Calendar className="absolute left-3 w-3 h-3 text-text-disabled pointer-events-none" />
+                          <input
+                            type="datetime-local"
+                            value={customStart}
+                            onChange={(e) => setCustomStart(e.target.value)}
+                            className="bg-transparent border-none pl-8 pr-2 py-1 text-[10px] font-bold text-white focus:outline-none w-[160px] cursor-pointer"
+                          />
+                        </div>
+                        <div className="text-text-disabled text-[10px]">➔</div>
+                        <div className="relative flex items-center group">
+                          <Clock className="absolute left-3 w-3 h-3 text-text-disabled pointer-events-none" />
+                          <input
+                            type="datetime-local"
+                            value={customEnd}
+                            onChange={(e) => setCustomEnd(e.target.value)}
+                            className="bg-transparent border-none pl-8 pr-2 py-1 text-[10px] font-bold text-white focus:outline-none w-[160px] cursor-pointer"
+                          />
+                        </div>
+                        <button 
+                          onClick={handleFetchHistory}
+                          className="p-2 hover:bg-mint-accent/20 rounded-lg group transition-all"
+                          title="Apply Custom Range"
+                        >
+                          <CheckCircle2 className="w-4 h-4 text-mint-accent group-hover:scale-110 transition-transform" />
+                        </button>
+                      </div>
+                    </div>
                     {/* Limit */}
                     <div className="flex flex-col">
-                      <label className="text-[9px] font-black tracking-widest text-gray-500 uppercase mb-2">Limit</label>
+                      <label className="text-[9px] font-bold tracking-widest text-text-secondary uppercase mb-2 opacity-50">Limit</label>
                       <input
                         type="number"
                         value={historyLimit}
                         onChange={(e) => setHistoryLimit(Math.max(1, parseInt(e.target.value) || 100))}
-                        className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs font-mono text-white focus:outline-none focus:neon-border-blue transition-all w-24"
+                        className="glass-inset bg-white/5 rounded-xl px-4 py-2.5 text-xs font-bold text-white focus:outline-none transition-all w-24 border-none"
                       />
                     </div>
 
@@ -451,14 +467,14 @@ const handleFetchHistory = () => {
                     <button
                       onClick={handleFetchHistory}
                       disabled={historyLoading}
-                      className="flex items-center space-x-2 px-6 py-2.5 bg-cyber-pink text-black font-black italic text-xs tracking-widest hover:brightness-110 active:scale-95 transition-all rounded-xl disabled:opacity-30"
+                      className="flex items-center space-x-3 px-8 py-2.5 bg-mint-accent text-charcoal-dark font-bold text-xs tracking-widest uppercase hover:brightness-110 active:scale-95 transition-all rounded-xl disabled:opacity-30"
                     >
                       {historyLoading ? (
                         <RefreshCw className="w-4 h-4 animate-spin" />
                       ) : (
                         <Download className="w-4 h-4" />
                       )}
-                      <span>FETCH</span>
+                      <span>QUERY</span>
                     </button>
                   </div>
                 </div>
@@ -489,78 +505,85 @@ const handleFetchHistory = () => {
             )}
           </div>
 
-          {/* ─── Right Sidebar (1 col) ────────────────────────────── */}
+          {/* Right Sidebar (1 col) */}
           <div className="space-y-6">
             {/* Session Controls */}
-            <div className="glass p-5 border-white/5 space-y-4 bg-black/40 rounded-2xl">
+            <div className="glass-card p-6 space-y-6 bg-white/5">
               <div className="flex items-center space-x-3">
-                <Settings className="w-4 h-4 text-gray-500" />
-                <span className="text-[10px] font-black tracking-[0.3em] text-gray-400 uppercase">
-                  Session Controls
+                <Settings className="w-5 h-5 text-mint-accent/50" />
+                <span className="text-[10px] font-bold tracking-[0.3em] text-text-secondary uppercase opacity-70">
+                  SESSION CONTROL
                 </span>
               </div>
 
               <button
                 onClick={() => clearDevice(activeSensorId)}
-                className="w-full flex items-center justify-between p-3 glass bg-white/5 hover:bg-cyber-pink/10 hover:border-cyber-pink/30 group transition-all rounded-xl"
+                className="w-full flex items-center justify-between p-4 glass-inset bg-white/5 hover:bg-white/10 group transition-all rounded-xl"
               >
-                <span className="text-[10px] font-black tracking-widest text-gray-400 group-hover:text-cyber-pink">
-                  PURGE_BUFFER
+                <span className="text-[10px] font-bold tracking-widest text-text-secondary group-hover:text-white uppercase transition-colors">
+                  Purge Buffer
                 </span>
-                <Trash2 className="w-4 h-4 text-gray-600 group-hover:text-cyber-pink" />
+                <Trash2 className="w-4 h-4 text-text-disabled group-hover:text-red-500 transition-colors" />
               </button>
 
               {/* Gateway Info */}
-              <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 space-y-3">
-                <div className="flex items-center justify-between text-[9px] font-black text-gray-500 tracking-widest uppercase">
-                  <span>Gateway Info</span>
+              <div className="p-4 rounded-xl bg-white/[0.03] space-y-4 shadow-inner">
+                <div className="flex items-center justify-between text-[9px] font-bold text-text-secondary tracking-widest uppercase opacity-50">
+                  <span>SYSTEM METRICS</span>
                 </div>
-                <InfoRow label="Mobile ID" value={gateway?.mobileId ?? mobileId} />
-                <InfoRow label="Sensors Attached" value={sensors.length.toString()} />
+                <InfoRow label="Access ID" value={gateway?.mobileId ?? mobileId} />
+                <InfoRow label="Active Nodes" value={sensors.length.toString()} />
                 <InfoRow
                   label="Registered"
-                  value={gateway?.createdAt ? new Date(gateway.createdAt).toLocaleDateString() : '—'}
+                  value={gateway?.createdAt ? new Date(gateway.createdAt).toLocaleDateString() : 'N/A'}
                 />
               </div>
             </div>
 
             {/* Live Bus Activity Feed */}
-            <div className="glass p-5 border-white/5 bg-black/40 rounded-2xl">
-              <div className="flex items-center space-x-3 mb-4">
-                <Layers className="w-4 h-4 text-gray-500" />
-                <span className="text-[10px] font-black tracking-[0.3em] text-gray-400 uppercase">
-                  Live Feed
+            <div className="glass-card p-6 bg-white/5 max-h-[500px] flex flex-col">
+              <div className="flex items-center space-x-3 mb-6">
+                <Layers className="w-5 h-5 text-mint-accent/50" />
+                <span className="text-[10px] font-bold tracking-[0.3em] text-text-secondary uppercase opacity-70">
+                  LIVE ACTIVITY
                 </span>
               </div>
-              <div className="max-h-[400px] overflow-y-auto pr-1 space-y-2">
-                {livePackets.slice(0, 20).map((p, i) => (
+              <div className="overflow-y-auto pr-1 space-y-3 flex-grow">
+                {livePackets.slice(0, 30).map((p, i) => (
                   <div
                     key={`${p.timestamp}-${i}`}
-                    className="flex items-center justify-between p-2.5 glass bg-white/[0.02] border-white/5 rounded-lg text-[10px] font-mono hover:bg-white/[0.05] transition-all"
+                    className="flex items-center justify-between p-3 glass-inset bg-white/[0.02] rounded-xl text-[10px] font-bold hover:bg-white/[0.05] transition-all"
                   >
-                    <span className="text-cyber-blue font-bold">{p.sensorType}</span>
-                    <span className="text-gray-600">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-1.5 h-1.5 rounded-full bg-mint-accent shadow-sm" />
+                      <span className="text-white uppercase tracking-tighter">{p.sensorType}</span>
+                    </div>
+                    <span className="text-text-disabled font-mono text-[9px]">
                       {formatDateTime(p.timestamp).split(',').pop()?.trim()}
                     </span>
                   </div>
                 ))}
                 {livePackets.length === 0 && (
-                  <div className="text-center py-8 text-[9px] text-gray-700 font-black tracking-widest italic">
-                    NO_PACKETS...
+                  <div className="text-center py-12 flex flex-col items-center">
+                    <Activity className="w-10 h-10 text-text-disabled opacity-10 mb-4" />
+                    <p className="text-[9px] text-text-disabled font-bold tracking-widest uppercase opacity-40">
+                      NO_ACTIVITY_DETECTED
+                    </p>
                   </div>
                 )}
               </div>
             </div>
           </div>
         </div>
-      </div>
+        </div>
+      )}
     </div>
   );
 }
 
 const InfoRow = ({ label, value }: { label: string; value: string }) => (
-  <div className="flex items-center justify-between text-xs">
-    <span className="text-gray-500">{label}</span>
-    <span className="font-mono text-gray-300 truncate max-w-[120px]">{value}</span>
+  <div className="flex items-center justify-between text-[11px] font-medium">
+    <span className="text-text-secondary opacity-60 uppercase tracking-tighter">{label}</span>
+    <span className="font-mono text-white/90 truncate max-w-[120px]">{value}</span>
   </div>
 );

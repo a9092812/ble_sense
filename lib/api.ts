@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { auth } from '@/lib/firebase';
 import {
   ApiMobile,
   ApiSensor,
@@ -15,6 +16,19 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
+});
+
+api.interceptors.request.use(async (config) => {
+  const user = auth.currentUser;
+  if (user) {
+    try {
+      const token = await user.getIdToken();
+      config.headers.Authorization = `Bearer ${token}`;
+    } catch (e) {
+      console.error("Failed getting firebase token for request", e);
+    }
+  }
+  return config;
 });
 
 // ─── Sensor field mappings per sensor type ───────────────────────────────────
@@ -141,10 +155,14 @@ export function normalizeHistoryRecord(record: any, sensorType: SensorType): Nor
 // ─── API Functions ───────────────────────────────────────────────────────────
 
 export async function getMobiles(): Promise<MobileGateway[]> {
-  const res = await fetch(`${API_BASE_URL}/api/mobiles`);
-  const json = await res.json();
-  if (!json.success || !Array.isArray(json.data)) return [];
-  return json.data.map(normalizeMobile);
+  try {
+    const { data } = await api.get('/api/mobiles');
+    if (!data.success || !Array.isArray(data.data)) return [];
+    return data.data.map(normalizeMobile);
+  } catch (error) {
+    console.error("Error fetching mobiles:", error);
+    return [];
+  }
 }
 
 export async function getMobileMetadata(mobileId: string): Promise<MobileGateway | null> {
@@ -153,10 +171,14 @@ export async function getMobileMetadata(mobileId: string): Promise<MobileGateway
 }
 
 export async function getMobileSensors(mobileId: string): Promise<SensorNode[]> {
-  const res = await fetch(`${API_BASE_URL}/api/mobiles/${mobileId}/sensors`);
-  const json = await res.json();
-  if (!json.success || !Array.isArray(json.data)) return [];
-  return json.data.map(normalizeSensorNode);
+  try {
+    const { data } = await api.get(`/api/mobiles/${mobileId}/sensors`);
+    if (!data.success || !Array.isArray(data.data)) return [];
+    return data.data.map(normalizeSensorNode);
+  } catch (error) {
+    console.error(`Error fetching sensors for ${mobileId}:`, error);
+    return [];
+  }
 }
 
 export async function sendCommand(command: CommandRequest): Promise<boolean> {

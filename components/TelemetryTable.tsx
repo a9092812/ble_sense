@@ -19,28 +19,30 @@ export const TelemetryTable: React.FC<TelemetryTableProps> = ({ packets, maxRows
   );
 
   return (
-<div className="glass border border-white/10 rounded-2xl shadow-2xl flex flex-col h-[400px]">
-      <div className="bg-black/40 px-6 py-4 border-b border-white/10 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <Terminal className="w-4 h-4 text-cyber-blue" />
-          <h3 className="text-xs font-black tracking-[0.4em] text-gray-400 uppercase">DATA_LOG</h3>
+    <div className="glass-card border-none flex flex-col h-[500px] overflow-hidden bg-white/5">
+      <div className="px-6 py-5 flex items-center justify-between relative z-20 shadow-sm border-b border-white/5">
+        <div className="flex items-center space-x-4">
+          <div className="p-2 glass-inset bg-white/5 rounded-lg">
+            <Terminal className="w-4 h-4 text-mint-accent" />
+          </div>
+          <h3 className="text-[10px] font-bold tracking-[0.4em] text-text-secondary uppercase opacity-70">TELEMETRY_LOG</h3>
         </div>
         <div className="flex items-center space-x-4">
-          <span className="text-[10px] font-mono text-gray-600 bg-white/5 px-2 py-0.5 rounded">
-            {rows.length} / {packets.length} rows
+          <span className="text-[9px] font-bold text-text-disabled bg-white/5 px-3 py-1 rounded-full uppercase tracking-widest">
+            {rows.length} / {packets.length} BUFFERED
           </span>
         </div>
       </div>
-      <div className="overflow-auto flex-1">
-        <table className="w-full text-left text-xs font-mono">
-         <thead className="sticky top-0 z-10 bg-black text-gray-500 border-b border-white/5">
+      
+      <div className="overflow-auto flex-1 relative z-10 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
+        <table className="w-full text-left text-[11px] font-bold">
+          <thead className="sticky top-0 z-20 bg-charcoal-dark/95 backdrop-blur-md text-text-secondary border-b border-white/5 shadow-sm">
             <tr>
-              
-              <th className="px-5 py-3 font-black uppercase tracking-widest italic text-[10px]">TIMESTAMP</th>
-              <th className="px-5 py-3 font-black uppercase tracking-widest italic text-[10px]">TYPE</th>
-              <th className="px-5 py-3 font-black uppercase tracking-widest italic text-[10px]">RSSI</th>
+              <th className="px-6 py-4 uppercase tracking-widest text-[9px] opacity-50">TIMESTAMP</th>
+              <th className="px-6 py-4 uppercase tracking-widest text-[9px] opacity-50">NODE_TYPE</th>
+              <th className="px-6 py-4 uppercase tracking-widest text-[9px] opacity-50">RSSI</th>
               {valueKeys.map(key => (
-                <th key={key} className="px-5 py-3 font-black uppercase tracking-widest italic text-[10px]">
+                <th key={key} className="px-6 py-4 uppercase tracking-widest text-[9px] opacity-50">
                   {key}
                 </th>
               ))}
@@ -48,22 +50,22 @@ export const TelemetryTable: React.FC<TelemetryTableProps> = ({ packets, maxRows
           </thead>
           <tbody className="divide-y divide-white/5">
             {rows.map((packet, index) => (
-              <tr key={`${packet.timestamp}-${index}`} className="hover:bg-cyber-blue/[0.03] transition-colors group">
-                <td className="px-5 py-3 whitespace-nowrap text-gray-400 group-hover:text-white">
+              <tr key={`${packet.timestamp}-${index}`} className="hover:bg-white/[0.03] transition-colors group">
+                <td className="px-6 py-4 whitespace-nowrap text-text-disabled group-hover:text-white font-mono transition-colors">
                   {formatDateTime(packet.timestamp)}
                 </td>
-                <td className="px-5 py-3 whitespace-nowrap">
-                  <span className="px-2 py-0.5 rounded text-[10px] font-black bg-white/10 text-cyber-blue border border-cyber-blue/30 uppercase tracking-tighter">
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className="px-3 py-1 rounded-lg text-[9px] font-bold bg-mint-accent/10 text-mint-accent/90 border border-mint-accent/20 uppercase tracking-widest">
                     {packet.sensorType}
                   </span>
                 </td>
-                <td className="px-5 py-3 whitespace-nowrap">
-                  <span className={`font-black ${packet.rssi > -70 ? 'text-cyber-neon' : 'text-cyber-pink'}`}>
-                    {packet.rssi} <span className="text-[8px] opacity-60">dBm</span>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  <span className={`font-mono text-xs ${packet.rssi > -70 ? 'text-mint-accent shadow-mint-accent/20 text-shadow-sm' : 'text-text-disabled'}`}>
+                    {packet.rssi} <span className="text-[9px] opacity-60">dBm</span>
                   </span>
                 </td>
                 {valueKeys.map(key => (
-                  <td key={key} className="px-5 py-3 whitespace-nowrap text-gray-300 tabular-nums">
+                  <td key={key} className="px-6 py-4 whitespace-nowrap text-white/80 font-mono tracking-tighter tabular-nums">
                     {packet.values[key] !== undefined ? packet.values[key].toFixed(2) : '—'}
                   </td>
                 ))}
@@ -71,8 +73,8 @@ export const TelemetryTable: React.FC<TelemetryTableProps> = ({ packets, maxRows
             ))}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={3 + valueKeys.length} className="px-6 py-20 text-center text-gray-600 italic font-mono tracking-widest opacity-50">
-                  NO_DATA_AWAITING_SIGNAL
+                <td colSpan={3 + valueKeys.length} className="px-6 py-32 text-center text-text-disabled uppercase font-bold tracking-[1em] opacity-20 text-[10px]">
+                  Waiting for data signal...
                 </td>
               </tr>
             )}

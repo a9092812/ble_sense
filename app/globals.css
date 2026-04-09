@@ -1,69 +1,90 @@
 @import "tailwindcss";
 
 @theme {
-  --color-cyber-black: #050505;
-  --color-cyber-gray: #1a1a1a;
-  --color-cyber-blue: #00f2ff;
-  --color-cyber-pink: #ff00ff;
-  --color-cyber-purple: #bc00ff;
-  --color-cyber-neon: #39ff14;
+  --color-mint-accent: #6CFFB0;
+  --color-mint-glow: #8EF9C5;
+  --color-charcoal-light: #1A1F2B;
+  --color-charcoal-dark: #0F1115;
+  --color-glass-surface: #1E232E;
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #A0A7B5;
+  --color-text-disabled: #5C6370;
 
   --font-sans: var(--font-inter), system-ui, sans-serif;
   --font-mono: var(--font-mono), monospace;
 }
 
 :root {
-  --background: #050505;
-  --foreground: #e0e0e0;
+  --background-start: #0F1115;
+  --background-end: #1A1F2B;
+  --foreground: #FFFFFF;
+  --glass-surface: #1E232E;
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --mint-accent: #6CFFB0;
+  --mint-glow: #8EF9C5;
 }
 
 body {
-  background: var(--background);
+  background: linear-gradient(180deg, var(--background-start) 0%, var(--background-end) 100%);
   color: var(--foreground);
   font-family: 'Inter', system-ui, sans-serif;
+  min-height: 100vh;
   overflow-x: hidden;
 }
 
-@utility glass {
-  background-color: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.75rem;
-}
-
+/* Neomorphic Raised Glass Card */
 @utility glass-card {
-  background-color: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1rem;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+  background-color: var(--glass-surface);
+  backdrop-filter: blur(30px);
+  border: 1px solid var(--glass-border);
+  border-radius: 1.5rem;
+  box-shadow: 
+    -8px -8px 14px rgba(255, 255, 255, 0.08),
+    8px 8px 14px rgba(0, 0, 0, 0.9);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  display: block;
   
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, transparent 50%, rgba(0, 0, 0, 0.2) 100%);
+  }
+
   &:hover {
-    border-color: rgba(0, 242, 255, 0.4);
-    box-shadow: 0 0 30px rgba(0, 242, 255, 0.1);
     transform: translateY(-2px);
+    box-shadow: 
+      -10px -10px 18px rgba(255, 255, 255, 0.1),
+      10px 10px 18px rgba(0, 0, 0, 1);
   }
 }
 
-@utility neon-text-blue {
-  color: #00f2ff;
-  filter: drop-shadow(0 0 5px rgba(0, 242, 255, 0.8));
+/* Neomorphic Sunken Glass Inset */
+@utility glass-inset {
+  background-color: rgba(30, 35, 46, 0.15);
+  border-radius: 0.75rem;
+  box-shadow: 
+    inset 4px 4px 8px rgba(0, 0, 0, 0.8),
+    inset -4px -4px 8px rgba(255, 255, 255, 0.1);
+  overflow: hidden;
 }
 
-@utility neon-text-pink {
-  color: #ff00ff;
-  filter: drop-shadow(0 0 5px rgba(255, 0, 255, 0.8));
+@utility neon-glow-mint {
+  box-shadow: 0 0 20px rgba(108, 255, 176, 0.4);
 }
 
-@utility neon-border-blue {
-  border-color: rgba(0, 242, 255, 0.5);
-  box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+@utility neon-text-mint {
+  color: var(--mint-accent);
+  filter: drop-shadow(0 0 5px rgba(108, 255, 176, 0.8));
 }
 
 @utility cyber-grid {
-  background-image: linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(108, 255, 176, 0.02) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(108, 255, 176, 0.02) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
@@ -73,10 +94,10 @@ body {
 
 @keyframes glow {
   from {
-    box-shadow: 0 0 5px rgba(0, 242, 255, 0.2), inset 0 0 5px rgba(0, 242, 255, 0.1);
+    box-shadow: 0 0 5px rgba(108, 255, 176, 0.2), inset 0 0 5px rgba(108, 255, 176, 0.1);
   }
   to {
-    box-shadow: 0 0 20px rgba(0, 242, 255, 0.4), inset 0 0 10px rgba(0, 242, 255, 0.2);
+    box-shadow: 0 0 20px rgba(108, 255, 176, 0.4), inset 0 0 10px rgba(108, 255, 176, 0.2);
   }
 }
 
@@ -86,14 +107,14 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #050505;
+  background: var(--color-charcoal-dark);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #222;
+  background: #2D3442;
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #00f2ff;
+  background: var(--color-mint-accent);
 }
